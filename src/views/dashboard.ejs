@@ -1,0 +1,16 @@
+<% layout('layouts/main') %>
+<h2>Dashboard</h2>
+<p>Welcome, <%= user.username %>!</p>
+<a href="/events/create" class="btn">Create Event</a>
+<h3>Your Events</h3>
+<ul>
+  <% userEvents.forEach(event => { %>
+  <li><a href="/events/<%= event._id %>"><%= event.title %></a></li>
+  <% }) %>
+</ul>
+<h3>Events You Are Attending</h3>
+<ul>
+  <% attendingEvents.forEach(event => { %>
+  <li><a href="/events/<%= event._id %>"><%= event.title %></a></li>
+  <% }) %>
+</ul>

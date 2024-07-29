@@ -1,0 +1,14 @@
+<header>
+  <nav>
+    <a href="/">Eventful</a>
+    <ul>
+      <% if (!user) { %>
+      <li><a href="/users/register">Register</a></li>
+      <li><a href="/users/login">Login</a></li>
+      <% } else { %>
+      <li><a href="/users/dashboard">Dashboard</a></li>
+      <li><a href="/users/logout">Logout</a></li>
+      <% } %>
+    </ul>
+  </nav>
+</header>

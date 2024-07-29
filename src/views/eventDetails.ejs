@@ -1,0 +1,13 @@
+<% layout('layouts/main') %>
+<h2><%= event.title %></h2>
+<p><%= event.description %></p>
+<p>Date: <%= event.date.toDateString() %></p>
+<p>Location: <%= event.location %></p>
+<p>Creator: <%= event.creator.username %></p>
+<h3>Attendees</h3>
+<ul>
+  <% event.attendees.forEach(attendee => { %>
+  <li><%= attendee.username %> (<%= attendee.email %>)</li>
+  <% }) %>
+</ul>
+<a href="/events/<%= event._id %>/attend" class="btn">Attend</a>

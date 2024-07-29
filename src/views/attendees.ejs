@@ -1,0 +1,7 @@
+<% layout('layouts/main') %>
+<h2>Attendees</h2>
+<ul>
+  <% attendees.forEach(attendee => { %>
+  <li><%= attendee.username %> (<%= attendee.email %>)</li>
+  <% }) %>
+</ul>
