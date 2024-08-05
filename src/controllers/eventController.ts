@@ -5,7 +5,6 @@ import { generateQRCode } from "../utils/qrcode";
 import User from "../models/user";
 import { cronJOb } from "../middleware/cronJob";
 import axios from "axios";
-import { any, number } from "joi";
 import logger from "../logging/logger";
 
 export const createEvent = async (

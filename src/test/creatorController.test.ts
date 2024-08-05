@@ -1,5 +1,5 @@
 import request from "supertest";
-import app from "../app"; // assuming your Express app is exported from app.ts or similar
+import app from "../index"; // assuming your Express app is exported from app.ts or similar
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import Event from "../models/Events";
