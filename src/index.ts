@@ -45,7 +45,7 @@ app.use("/user", userRoute);
 app.use("/creator", creatorRoute);
 app.use("/event", eventRoute);
 app.use("/payment", PaymentRoute);
-app.use("/", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     message: "Welcome to Eventful API",
   });
