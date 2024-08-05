@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Response, Request } from "express";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import connectToDB from "./db/dbconnection";
@@ -41,6 +41,11 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+app.use("/", (req: Request, res: Response) => {
+  res.status(200).json({
+    message: "Welcome to Eventful API",
+  });
+});
 app.use("/user", userRoute);
 app.use("/creator", creatorRoute);
 app.use("/event", eventRoute);

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "rimraf ./build && tsc && nodemon ./build/index.js",
+    "start": "rimraf ./build && tsc && node ./build/index.js",
     "start:dev": "nodemon ./build/index.js",
     "copy-assets": "copyfiles -u 1 src/views/**/* src/public/**/* build/",
     "build": "rimraf ./build && tsc && npm run copy-assets",
