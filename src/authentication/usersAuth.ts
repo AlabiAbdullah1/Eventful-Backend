@@ -53,11 +53,10 @@ passport.use(
           return done(null, false, {
             message: "Email already in use",
           });
-          // return console.log("Email already in use");
         }
 
-        const { name } = req.body;
-        const user = await UserModel.create({ name, email, password });
+        const { name, role } = req.body;
+        const user = await UserModel.create({ name, email, password, role });
 
         return done(null, user);
       } catch (error: any) {

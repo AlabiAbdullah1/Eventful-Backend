@@ -48,8 +48,6 @@ export const login_creator = async (
             process.env.JWT_SECRET as string
           );
 
-          // return res.cookie("token", token);
-
           return res.json({ token, Id: user._id });
           // res.status(200).render("login");
         });
@@ -60,42 +58,38 @@ export const login_creator = async (
   )(req, res, next);
 };
 
-export const Analytics = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  passport.authenticate("auth", async (err: Error, user: any, info: any) => {
-    try {
+export const Analytics = (req: Request, res: Response, next: NextFunction) => {
+  passport.authenticate(
+    "jwt",
+    { session: false },
+    async (err: any, user: any, info: any) => {
       if (err || !user) {
-        return res.status(401).json({
-          message: "Unauthorized, Please Login in",
-        });
+        return res.status(401).json({ message: "Unauthorized, Please Login" });
       }
 
-      const events = await Event.find();
+      try {
+        const events = await Event.find({ creatorId: user._id });
+        const analyticsData = await Promise.all(
+          events.map(async (event) => {
+            const qrCode = await generateQRCode(
+              `http://localhost:8000/event/${event.id}`
+            );
+            const attender = event.attendees.length;
 
-      events.forEach(async (event) => {
-        if (event.creatorId === user.id) {
-          const qrCode = await generateQRCode(
-            `http://localhost:8000/event/${event.id}`
-          );
-          const attender = event.attendees.length;
-          res.status(200).json({
-            eventAttender: `There are ${attender} for the event ${event.name}`,
-            qrCode,
-            numberOfTicketsBought: `${attender} tickets are bought for the ${event.name} event`,
-          });
-        }
-      });
+            return {
+              eventAttender: `There are ${attender} attendees for the event ${event.name}`,
+              qrCode,
+              numberOfTicketsBought: `${attender} tickets are bought for the ${event.name} event`,
+            };
+          })
+        );
 
-      return next();
-    } catch (error: any) {
-      res.status(500).json({
-        message: error.message,
-      });
+        return res.status(200).json(analyticsData);
+      } catch (error: any) {
+        return res.status(500).json({ message: error.message });
+      }
     }
-  })(req, res, next);
+  )(req, res, next);
 };
 
 export const test = async (req: Request, res: Response, next: NextFunction) => {

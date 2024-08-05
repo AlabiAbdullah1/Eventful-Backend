@@ -50,6 +50,7 @@ passport.use(
         const creator = await Creator.findOne({ email });
 
         if (users || creator) {
+          console.log("email already in use");
           return done(null, false, {
             message: "Email already in use",
           });

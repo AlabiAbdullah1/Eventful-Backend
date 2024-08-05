@@ -48,10 +48,9 @@ passport_1.default.use("signup", new passport_local_1.Strategy({
             return done(null, false, {
                 message: "Email already in use",
             });
-            // return console.log("Email already in use");
         }
-        const { name } = req.body;
-        const user = yield user_1.default.create({ name, email, password });
+        const { name, role } = req.body;
+        const user = yield user_1.default.create({ name, email, password, role });
         return done(null, user);
     }
     catch (error) {

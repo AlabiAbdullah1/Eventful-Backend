@@ -24,6 +24,7 @@ const creatorSchema = new mongoose_1.Schema({
         type: String,
         required: true,
         unique: true,
+        lowercase: true,
     },
     password: {
         type: String,

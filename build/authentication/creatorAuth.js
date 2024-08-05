@@ -45,6 +45,7 @@ passport_1.default.use("creator-signup", new passport_local_1.Strategy({
         const users = yield user_1.default.findOne({ email });
         const creator = yield creator_1.default.findOne({ email });
         if (users || creator) {
+            console.log("email already in use");
             return done(null, false, {
                 message: "Email already in use",
             });

@@ -33,8 +33,9 @@ export const login_post = async (
         return next(err);
       }
       if (!user) {
-        const error = new Error("Username or password is incorrect");
-        return next(error);
+        // Use the message from `info` if available, otherwise default to "incorrect_credentials"
+        const message = info ? info.message : "incorrect_credentials";
+        return next(message);
       }
 
       req.login(user, { session: false }, async (error: Error) => {
@@ -60,21 +61,29 @@ export const eventsAttended = async (
   res: Response,
   next: NextFunction
 ) => {
-  passport.authenticate("auth", async (err: Error, user: any, info: any) => {
+  passport.authenticate("jwt", async (err: Error, user: any, info: any) => {
     try {
       if (err || !user) {
-        res.status(401).json({
+        return res.status(401).json({
           message: "Unauthorized, Please Login in",
         });
       }
 
-      const users = await User.findById(user.id);
+      const users = await User.findById(user._id);
+
+      const eventId = users?.eventAttended.map((event) => {
+        return event.id;
+      });
+
+      const qrCode = await generateQRCode(
+        `http://localhost:8000/event/${eventId}`
+      );
 
       res.status(200).json({
         message: users?.eventAttended,
+        qrCode,
       });
     } catch (err: any) {
-      // return next();
       res.status(500).json({
         message: err.message,
         stack: err.stack,
@@ -114,7 +123,7 @@ export const setReminder = async (
   res: Response,
   next: NextFunction
 ) => {
-  passport.authenticate("auth", async (err: Error, user: any, info: any) => {
+  passport.authenticate("jwt", async (err: Error, user: any, info: any) => {
     try {
       if (err || !user) {
         res.status(401).json({
@@ -123,7 +132,7 @@ export const setReminder = async (
       }
 
       const date = req.body; //Date to set for the reminder
-      const users = await User.findById(user.id);
+      const users = await User.findById(user._id);
 
       res.status(200).json({
         message: users?.eventAttended,

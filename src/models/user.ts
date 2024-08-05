@@ -10,7 +10,12 @@ interface IUser extends Document {
   role: string;
   // eventAttended: mongoose.Types.ObjectId[];
   eventAttended: {
+    id: string;
     name: string;
+    descriptiom: string;
+    status: string;
+    price: number;
+    date: Date;
   }[];
   isValidPassword(password: string): Promise<boolean>;
 }
@@ -37,6 +42,10 @@ const userSchema = new Schema<IUser>({
   },
   eventAttended: [
     {
+      id: {
+        type: String,
+        ref: "Event",
+      },
       name: {
         type: String,
         ref: "Event",
@@ -50,6 +59,10 @@ const userSchema = new Schema<IUser>({
         ref: "Event",
       },
       status: {
+        type: String,
+        ref: "Event",
+      },
+      price: {
         type: String,
         ref: "Event",
       },

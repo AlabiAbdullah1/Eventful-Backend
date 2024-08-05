@@ -35,6 +35,10 @@ const userSchema = new mongoose_1.Schema({
     },
     eventAttended: [
         {
+            id: {
+                type: String,
+                ref: "Event",
+            },
             name: {
                 type: String,
                 ref: "Event",
@@ -48,6 +52,10 @@ const userSchema = new mongoose_1.Schema({
                 ref: "Event",
             },
             status: {
+                type: String,
+                ref: "Event",
+            },
+            price: {
                 type: String,
                 ref: "Event",
             },

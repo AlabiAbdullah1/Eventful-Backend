@@ -16,6 +16,7 @@ exports.setReminder = exports.getAllUsers = exports.eventsAttended = exports.log
 const passport_1 = __importDefault(require("passport"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_1 = __importDefault(require("../models/user"));
+const qrcode_1 = require("../utils/qrcode");
 const getRegister = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         res.status(200).render("login");
@@ -42,8 +43,9 @@ const login_post = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
                 return next(err);
             }
             if (!user) {
-                const error = new Error("Username or password is incorrect");
-                return next(error);
+                // Use the message from `info` if available, otherwise default to "incorrect_credentials"
+                const message = info ? info.message : "incorrect_credentials";
+                return next(message);
             }
             req.login(user, { session: false }, (error) => __awaiter(void 0, void 0, void 0, function* () {
                 if (error)
@@ -61,20 +63,24 @@ const login_post = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.login_post = login_post;
 const eventsAttended = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    passport_1.default.authenticate("auth", (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
+    passport_1.default.authenticate("jwt", (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             if (err || !user) {
-                res.status(401).json({
+                return res.status(401).json({
                     message: "Unauthorized, Please Login in",
                 });
             }
-            const users = yield user_1.default.findById(user.id);
+            const users = yield user_1.default.findById(user._id);
+            const eventId = users === null || users === void 0 ? void 0 : users.eventAttended.map((event) => {
+                return event.id;
+            });
+            const qrCode = yield (0, qrcode_1.generateQRCode)(`http://localhost:8000/event/${eventId}`);
             res.status(200).json({
                 message: users === null || users === void 0 ? void 0 : users.eventAttended,
+                qrCode,
             });
         }
         catch (err) {
-            // return next();
             res.status(500).json({
                 message: err.message,
                 stack: err.stack,
@@ -106,7 +112,7 @@ const getAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.getAllUsers = getAllUsers;
 const setReminder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    passport_1.default.authenticate("auth", (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
+    passport_1.default.authenticate("jwt", (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             if (err || !user) {
                 res.status(401).json({
@@ -114,7 +120,7 @@ const setReminder = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                 });
             }
             const date = req.body; //Date to set for the reminder
-            const users = yield user_1.default.findById(user.id);
+            const users = yield user_1.default.findById(user._id);
             res.status(200).json({
                 message: users === null || users === void 0 ? void 0 : users.eventAttended,
             });

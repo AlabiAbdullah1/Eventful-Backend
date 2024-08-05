@@ -21,6 +21,7 @@ const creatorSchema = new Schema<ICreator>({
     type: String,
     required: true,
     unique: true,
+    lowercase: true,
   },
   password: {
     type: String,

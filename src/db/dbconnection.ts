@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import logger from "../logging/logger";
 
 dotenv.config();
 
@@ -9,11 +10,11 @@ function connectToDB(): void {
   mongoose.connect(MONGODB_URI);
 
   mongoose.connection.on("connected", () => {
-    console.log("DB connected Successfully!");
+    logger.info("DB connected Successfully!");
   });
 
   mongoose.connection.on("error", () => {
-    console.log("An error occured!");
+    logger.info("An error occured!");
   });
 }
 

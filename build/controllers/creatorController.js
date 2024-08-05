@@ -46,7 +46,6 @@ const login_creator = (req, res, next) => __awaiter(void 0, void 0, void 0, func
                     return next(error);
                 const body = { _id: user._id, email: user.email };
                 const token = jsonwebtoken_1.default.sign({ user: body }, process.env.JWT_SECRET);
-                // return res.cookie("token", token);
                 return res.json({ token, Id: user._id });
                 // res.status(200).render("login");
             }));
@@ -57,35 +56,29 @@ const login_creator = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }))(req, res, next);
 });
 exports.login_creator = login_creator;
-const Analytics = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    passport_1.default.authenticate("auth", (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
+const Analytics = (req, res, next) => {
+    passport_1.default.authenticate("jwt", { session: false }, (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
+        if (err || !user) {
+            return res.status(401).json({ message: "Unauthorized, Please Login" });
+        }
         try {
-            if (err || !user) {
-                return res.status(401).json({
-                    message: "Unauthorized, Please Login in",
-                });
-            }
-            const events = yield Events_1.default.find();
-            events.forEach((event) => __awaiter(void 0, void 0, void 0, function* () {
-                if (event.creatorId === user.id) {
-                    const qrCode = yield (0, qrcode_1.generateQRCode)(`http://localhost:8000/event/${event.id}`);
-                    const attender = event.attendees.length;
-                    res.status(200).json({
-                        eventAttender: `There are ${attender} for the event ${event.name}`,
-                        qrCode,
-                        numberOfTicketsBought: `${attender} tickets are bought for the ${event.name} event`,
-                    });
-                }
-            }));
-            return next();
+            const events = yield Events_1.default.find({ creatorId: user._id });
+            const analyticsData = yield Promise.all(events.map((event) => __awaiter(void 0, void 0, void 0, function* () {
+                const qrCode = yield (0, qrcode_1.generateQRCode)(`http://localhost:8000/event/${event.id}`);
+                const attender = event.attendees.length;
+                return {
+                    eventAttender: `There are ${attender} attendees for the event ${event.name}`,
+                    qrCode,
+                    numberOfTicketsBought: `${attender} tickets are bought for the ${event.name} event`,
+                };
+            })));
+            return res.status(200).json(analyticsData);
         }
         catch (error) {
-            res.status(500).json({
-                message: error.message,
-            });
+            return res.status(500).json({ message: error.message });
         }
     }))(req, res, next);
-});
+};
 exports.Analytics = Analytics;
 const test = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     passport_1.default.authenticate("auth", (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {

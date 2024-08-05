@@ -14,7 +14,7 @@ const eventController_1 = require("../controllers/eventController");
 const eventRoute = (0, express_1.Router)();
 // eventRoute.post("/", verifyRole, createEvent);
 eventRoute.post("/", eventController_1.createEvent);
-eventRoute.get("/:id", eventController_1.getEvent);
+eventRoute.get("/creator-events", eventController_1.get_Event_By_Creator);
 eventRoute.post("/pay", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
     }
@@ -31,6 +31,7 @@ eventRoute.post("/pay", (req, res) => __awaiter(void 0, void 0, void 0, function
 //     res.status(500).json({ message: error.message });
 //   }
 // });
-eventRoute.post("/:id/join", eventController_1.attendee_post);
+eventRoute.post("/:eventId/join", eventController_1.attendee_post);
 eventRoute.get("/", eventController_1.getEvents);
+eventRoute.get("/:id", eventController_1.getEvent);
 exports.default = eventRoute;

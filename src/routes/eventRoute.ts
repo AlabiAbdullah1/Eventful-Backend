@@ -2,7 +2,8 @@ import { Router } from "express";
 import {
   attendee_post,
   createEvent,
-  get_Event_Attender,
+  // get_Event_Attender,
+  get_Event_By_Creator,
   getEvent,
   getEvents,
 } from "../controllers/eventController";
@@ -14,7 +15,7 @@ const eventRoute = Router();
 
 // eventRoute.post("/", verifyRole, createEvent);
 eventRoute.post("/", createEvent);
-eventRoute.get("/:id", getEvent);
+eventRoute.get("/creator-events", get_Event_By_Creator);
 
 eventRoute.post("/pay", async (req: Request, res: Response) => {
   try {
@@ -34,7 +35,8 @@ eventRoute.post("/pay", async (req: Request, res: Response) => {
 //   }
 // });
 
-eventRoute.post("/:id/join", attendee_post);
+eventRoute.post("/:eventId/join", attendee_post);
 eventRoute.get("/", getEvents);
+eventRoute.get("/:id", getEvent);
 
 export default eventRoute;
