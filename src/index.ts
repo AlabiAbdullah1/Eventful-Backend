@@ -41,15 +41,15 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+app.use("/user", userRoute);
+app.use("/creator", creatorRoute);
+app.use("/event", eventRoute);
+app.use("/payment", PaymentRoute);
 app.use("/", (req: Request, res: Response) => {
   res.status(200).json({
     message: "Welcome to Eventful API",
   });
 });
-app.use("/user", userRoute);
-app.use("/creator", creatorRoute);
-app.use("/event", eventRoute);
-app.use("/payment", PaymentRoute);
 
 const PORT = process.env.PORT;
 
