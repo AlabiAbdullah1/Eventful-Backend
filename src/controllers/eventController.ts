@@ -23,7 +23,8 @@ export const createEvent = async (
       const { name, description, date, status, price } = req.body;
 
       const creatorId = user._id;
-      const creatorName = user.email;
+      const creatorEmail = user.email;
+      const creatorName = user.name;
       const todayDate: any = new Date();
       const event = await Event.create({
         name,
@@ -31,6 +32,7 @@ export const createEvent = async (
         date: new Date(date),
         creatorId,
         creatorName,
+        creatorEmail,
         status,
         price,
       });

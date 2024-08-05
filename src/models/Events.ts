@@ -6,6 +6,7 @@ interface IEvent extends Document {
   description: string;
   date: Date;
   price: Number;
+  creatorEmail: string;
   creatorName: string;
   creatorId: mongoose.Types.ObjectId;
   status: "pending" | "active" | "done";
@@ -37,6 +38,10 @@ const eventSchema = new Schema<IEvent>({
   price: {
     type: Number,
     required: true,
+  },
+  creatorEmail: {
+    type: String,
+    // required: true,
   },
 
   creatorName: {

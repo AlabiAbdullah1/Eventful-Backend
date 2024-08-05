@@ -19,6 +19,10 @@ const eventSchema = new mongoose_1.Schema({
         type: Number,
         required: true,
     },
+    creatorEmail: {
+        type: String,
+        // required: true,
+    },
     creatorName: {
         type: String,
         // required: true,

@@ -28,7 +28,8 @@ const createEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             }
             const { name, description, date, status, price } = req.body;
             const creatorId = user._id;
-            const creatorName = user.email;
+            const creatorEmail = user.email;
+            const creatorName = user.name;
             const todayDate = new Date();
             const event = yield Events_1.default.create({
                 name,
@@ -36,6 +37,7 @@ const createEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                 date: new Date(date),
                 creatorId,
                 creatorName,
+                creatorEmail,
                 status,
                 price,
             });
