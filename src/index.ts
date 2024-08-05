@@ -14,6 +14,7 @@ import PaymentRoute from "./routes/paymentRoute";
 import logger from "./logging/logger";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
+import cors from "cors";
 
 dotenv.config();
 
@@ -31,7 +32,7 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(helmet());
 
-app.use(corsMiddleware);
+app.use(cors());
 app.use(cookieParser());
 
 app.use(express.json());
