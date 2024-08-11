@@ -16,7 +16,7 @@ export const createEvent = async (
     try {
       if (err || !user) {
         return res.status(401).json({
-          message: "Unauthorized, Please Login in",
+          message: "Unauthorized, Please Login",
         });
       }
 
@@ -25,21 +25,33 @@ export const createEvent = async (
       const creatorId = user._id;
       const creatorEmail = user.email;
       const creatorName = user.name;
-      const todayDate: any = new Date();
+      const todayDate = new Date();
+
+      // Check if the event date is greater than today's date
+      const eventDate = new Date(date);
+      if (eventDate < todayDate) {
+        return res.status(400).json({
+          message:
+            "Event date cannot be in the past. Please select a valid date.",
+        });
+      }
+
       const event = await Event.create({
         name,
         description,
-        date: new Date(date),
+        date: eventDate,
         creatorId,
         creatorName,
         creatorEmail,
         status,
         price,
       });
+
       res.status(201).json({
         message: "Event created Successfully!",
         data: event,
       });
+
       return next();
     } catch (error: any) {
       res.status(500).json({
@@ -59,17 +71,38 @@ export const getEvents = async (
     try {
       if (err || !user) {
         return res.status(401).json({
-          message: "Unauthorized, Please Login in",
+          message: "Unauthorized, Please Login",
         });
       }
 
       const events = await Event.find();
-      // const reminder = cronJOb(req, res, next);
+
+      const todayDate = new Date();
+
+      const updateStatus = (eventDate: Date) => {
+        if (eventDate < todayDate) {
+          return "done";
+        } else if (eventDate.toDateString() === todayDate.toDateString()) {
+          return "active";
+        } else {
+          return "pending";
+        }
+      };
+
+      // Update the status of each event using a partial update
+      const updatedEvents = await Promise.all(
+        events.map(async (event: any) => {
+          const updatedStatus = updateStatus(event.date);
+          // Update only the status field
+          await Event.findByIdAndUpdate(event._id, { status: updatedStatus });
+          return { ...event.toObject(), status: updatedStatus }; // Return the updated event object
+        })
+      );
 
       res.status(200).json({
-        data: events,
-        // reminder,
+        data: updatedEvents,
       });
+
       return next();
     } catch (error: any) {
       res.status(500).json({
@@ -78,7 +111,6 @@ export const getEvents = async (
     }
   })(req, res, next);
 };
-
 // GET AN EVENT
 export const getEvent = async (
   req: Request,
@@ -237,15 +269,40 @@ export const get_Event_By_Creator = async (
 
     try {
       const events = await Event.find({ creatorId: user._id });
+
       if (events.length === 0) {
         return res.status(404).json({
           message: "No events found for this user",
         });
       }
 
+      const today = new Date();
+
+      // Update event status based on the current date
+      for (const event of events) {
+        const eventDate = new Date(event.date);
+
+        if (eventDate > today) {
+          event.status = "pending";
+        } else if (
+          eventDate.toDateString() === today.toDateString() // Checks if the event is today
+        ) {
+          event.status = "active";
+        } else if (eventDate < today) {
+          event.status = "done";
+        }
+
+        await event.save(); // Save the updated event
+      }
+
       return res.status(200).json({
         data: events,
       });
-    } catch (error) {}
+    } catch (error: any) {
+      return res.status(500).json({
+        message: "An error occurred while fetching events",
+        error: error.message,
+      });
+    }
   })(req, res, next);
 };

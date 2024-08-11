@@ -1,9 +1,11 @@
 import { Router } from "express";
 import {
   Analytics,
+  deleteEvent,
   login_creator,
   signup_creator,
   test,
+  updateEvent,
 } from "../controllers/creatorController";
 import passport from "passport";
 
@@ -20,5 +22,8 @@ creatorRoute.post(
   }),
   signup_creator
 );
+
+creatorRoute.put("/:id", updateEvent);
+creatorRoute.delete("/:id", deleteEvent);
 
 export default creatorRoute;

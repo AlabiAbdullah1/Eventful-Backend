@@ -11,10 +11,12 @@ function connectToDB(): void {
 
   mongoose.connection.on("connected", () => {
     logger.info("DB connected Successfully!");
+    console.log("DB connected Successfully!");
   });
 
   mongoose.connection.on("error", () => {
     logger.info("An error occured!");
+    console.log("An error occured!");
   });
 }
 

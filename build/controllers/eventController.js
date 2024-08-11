@@ -23,7 +23,7 @@ const createEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         try {
             if (err || !user) {
                 return res.status(401).json({
-                    message: "Unauthorized, Please Login in",
+                    message: "Unauthorized, Please Login",
                 });
             }
             const { name, description, date, status, price } = req.body;
@@ -31,10 +31,17 @@ const createEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             const creatorEmail = user.email;
             const creatorName = user.name;
             const todayDate = new Date();
+            // Check if the event date is greater than today's date
+            const eventDate = new Date(date);
+            if (eventDate < todayDate) {
+                return res.status(400).json({
+                    message: "Event date cannot be in the past. Please select a valid date.",
+                });
+            }
             const event = yield Events_1.default.create({
                 name,
                 description,
-                date: new Date(date),
+                date: eventDate,
                 creatorId,
                 creatorName,
                 creatorEmail,
@@ -61,14 +68,31 @@ const getEvents = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         try {
             if (err || !user) {
                 return res.status(401).json({
-                    message: "Unauthorized, Please Login in",
+                    message: "Unauthorized, Please Login",
                 });
             }
             const events = yield Events_1.default.find();
-            // const reminder = cronJOb(req, res, next);
+            const todayDate = new Date();
+            const updateStatus = (eventDate) => {
+                if (eventDate < todayDate) {
+                    return "done";
+                }
+                else if (eventDate.toDateString() === todayDate.toDateString()) {
+                    return "active";
+                }
+                else {
+                    return "pending";
+                }
+            };
+            // Update the status of each event using a partial update
+            const updatedEvents = yield Promise.all(events.map((event) => __awaiter(void 0, void 0, void 0, function* () {
+                const updatedStatus = updateStatus(event.date);
+                // Update only the status field
+                yield Events_1.default.findByIdAndUpdate(event._id, { status: updatedStatus });
+                return Object.assign(Object.assign({}, event.toObject()), { status: updatedStatus }); // Return the updated event object
+            })));
             res.status(200).json({
-                data: events,
-                // reminder,
+                data: updatedEvents,
             });
             return next();
         }
@@ -204,11 +228,32 @@ const get_Event_By_Creator = (req, res, next) => __awaiter(void 0, void 0, void 
                     message: "No events found for this user",
                 });
             }
+            const today = new Date();
+            // Update event status based on the current date
+            for (const event of events) {
+                const eventDate = new Date(event.date);
+                if (eventDate > today) {
+                    event.status = "pending";
+                }
+                else if (eventDate.toDateString() === today.toDateString() // Checks if the event is today
+                ) {
+                    event.status = "active";
+                }
+                else if (eventDate < today) {
+                    event.status = "done";
+                }
+                yield event.save(); // Save the updated event
+            }
             return res.status(200).json({
                 data: events,
             });
         }
-        catch (error) { }
+        catch (error) {
+            return res.status(500).json({
+                message: "An error occurred while fetching events",
+                error: error.message,
+            });
+        }
     }))(req, res, next);
 });
 exports.get_Event_By_Creator = get_Event_By_Creator;

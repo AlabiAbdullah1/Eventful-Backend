@@ -13,4 +13,6 @@ creatorRoute.post("/login", creatorController_1.login_creator);
 creatorRoute.post("/signup", passport_1.default.authenticate("creator-signup", {
     session: false,
 }), creatorController_1.signup_creator);
+creatorRoute.put("/:id", creatorController_1.updateEvent);
+creatorRoute.delete("/:id", creatorController_1.deleteEvent);
 exports.default = creatorRoute;

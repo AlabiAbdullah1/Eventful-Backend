@@ -132,3 +132,118 @@ export const test = async (req: Request, res: Response, next: NextFunction) => {
     }
   })(req, res, next);
 };
+
+export const updateEvent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  passport.authenticate("jwt", async (err: Error, user: any, info: any) => {
+    try {
+      if (err || !user) {
+        return res.status(401).json({
+          message: "Unauthorized, Please Login",
+        });
+      }
+
+      const { id } = req.params;
+      const { name, description, date, status, price } = req.body;
+
+      // Find the event by ID
+      let event = await Event.findById(id);
+
+      if (!event) {
+        return res.status(404).json({
+          message: "Event not found.",
+        });
+      }
+
+      // Check if the user is the creator of the event
+      if (event.creatorId.toString() !== user._id.toString()) {
+        return res.status(403).json({
+          message: "You are not authorized to update this event.",
+        });
+      }
+
+      // Check if the new event date is in the future
+      if (date) {
+        const eventDate = new Date(date);
+        const todayDate = new Date();
+        if (eventDate > todayDate) {
+          return res.status(400).json({
+            message:
+              "Event date cannot be in the future. Please select a valid date.",
+          });
+        }
+        event.date = eventDate;
+      }
+
+      // Update other fields
+      if (name) event.name = name;
+      if (description) event.description = description;
+      if (status) event.status = status;
+      if (price) event.price = price;
+
+      // Save the updated event
+      const updatedEvent = await event.save();
+
+      res.status(200).json({
+        message: "Event updated successfully!",
+        data: updatedEvent,
+      });
+
+      return next();
+    } catch (error: any) {
+      res.status(500).json({
+        message: error.message,
+      });
+    }
+  })(req, res, next);
+};
+
+export const deleteEvent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  passport.authenticate("jwt", async (err: Error, user: any, info: any) => {
+    try {
+      if (err || !user) {
+        return res.status(401).json({
+          message: "Unauthorized, Please Login",
+        });
+      }
+
+      const { id } = req.params;
+
+      // Find the event by ID
+      const event = await Event.findById(id);
+
+      if (!event) {
+        return res.status(404).json({
+          message: "Event not found.",
+        });
+      }
+
+      // Check if the user is the creator of the event
+      if (event.creatorId.toString() !== user._id.toString()) {
+        return res.status(403).json({
+          message: "You are not authorized to delete this event.",
+        });
+      }
+
+      // Delete the event
+      await Event.findByIdAndDelete(id);
+
+      res.status(200).json({
+        message: "Event deleted successfully!",
+      });
+
+      return next();
+    } catch (error: any) {
+      res.status(500).json({
+        message: error.message,
+      });
+    }
+  })(req, res, next);
+};

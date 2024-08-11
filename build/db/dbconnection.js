@@ -12,9 +12,11 @@ function connectToDB() {
     mongoose_1.default.connect(MONGODB_URI);
     mongoose_1.default.connection.on("connected", () => {
         logger_1.default.info("DB connected Successfully!");
+        console.log("DB connected Successfully!");
     });
     mongoose_1.default.connection.on("error", () => {
         logger_1.default.info("An error occured!");
+        console.log("An error occured!");
     });
 }
 exports.default = connectToDB;

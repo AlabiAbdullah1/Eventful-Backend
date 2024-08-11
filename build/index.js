@@ -49,5 +49,6 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
     logger_1.default.info(`Listening on port ${PORT}`);
+    console.log(`Listening on port ${PORT}...`);
 });
 exports.default = app;

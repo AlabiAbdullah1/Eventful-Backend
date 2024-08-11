@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.test = exports.Analytics = exports.login_creator = exports.signup_creator = void 0;
+exports.deleteEvent = exports.updateEvent = exports.test = exports.Analytics = exports.login_creator = exports.signup_creator = void 0;
 const passport_1 = __importDefault(require("passport"));
 const Events_1 = __importDefault(require("../models/Events"));
 const qrcode_1 = require("../utils/qrcode");
@@ -114,3 +114,99 @@ const test = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
     }))(req, res, next);
 });
 exports.test = test;
+const updateEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    passport_1.default.authenticate("jwt", (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            if (err || !user) {
+                return res.status(401).json({
+                    message: "Unauthorized, Please Login",
+                });
+            }
+            const { id } = req.params;
+            const { name, description, date, status, price } = req.body;
+            // Find the event by ID
+            let event = yield Events_1.default.findById(id);
+            if (!event) {
+                return res.status(404).json({
+                    message: "Event not found.",
+                });
+            }
+            // Check if the user is the creator of the event
+            if (event.creatorId.toString() !== user._id.toString()) {
+                return res.status(403).json({
+                    message: "You are not authorized to update this event.",
+                });
+            }
+            // Check if the new event date is in the future
+            if (date) {
+                const eventDate = new Date(date);
+                const todayDate = new Date();
+                if (eventDate > todayDate) {
+                    return res.status(400).json({
+                        message: "Event date cannot be in the future. Please select a valid date.",
+                    });
+                }
+                event.date = eventDate;
+            }
+            // Update other fields
+            if (name)
+                event.name = name;
+            if (description)
+                event.description = description;
+            if (status)
+                event.status = status;
+            if (price)
+                event.price = price;
+            // Save the updated event
+            const updatedEvent = yield event.save();
+            res.status(200).json({
+                message: "Event updated successfully!",
+                data: updatedEvent,
+            });
+            return next();
+        }
+        catch (error) {
+            res.status(500).json({
+                message: error.message,
+            });
+        }
+    }))(req, res, next);
+});
+exports.updateEvent = updateEvent;
+const deleteEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    passport_1.default.authenticate("jwt", (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            if (err || !user) {
+                return res.status(401).json({
+                    message: "Unauthorized, Please Login",
+                });
+            }
+            const { id } = req.params;
+            // Find the event by ID
+            const event = yield Events_1.default.findById(id);
+            if (!event) {
+                return res.status(404).json({
+                    message: "Event not found.",
+                });
+            }
+            // Check if the user is the creator of the event
+            if (event.creatorId.toString() !== user._id.toString()) {
+                return res.status(403).json({
+                    message: "You are not authorized to delete this event.",
+                });
+            }
+            // Delete the event
+            yield Events_1.default.findByIdAndDelete(id);
+            res.status(200).json({
+                message: "Event deleted successfully!",
+            });
+            return next();
+        }
+        catch (error) {
+            res.status(500).json({
+                message: error.message,
+            });
+        }
+    }))(req, res, next);
+});
+exports.deleteEvent = deleteEvent;
