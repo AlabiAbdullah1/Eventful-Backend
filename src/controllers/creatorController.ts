@@ -169,10 +169,10 @@ export const updateEvent = async (
       if (date) {
         const eventDate = new Date(date);
         const todayDate = new Date();
-        if (eventDate > todayDate) {
+        if (eventDate < todayDate) {
           return res.status(400).json({
             message:
-              "Event date cannot be in the future. Please select a valid date.",
+              "Event date cannot be in the past. Please select a valid date.",
           });
         }
         event.date = eventDate;

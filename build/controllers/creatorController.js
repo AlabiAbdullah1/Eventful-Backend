@@ -141,9 +141,9 @@ const updateEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             if (date) {
                 const eventDate = new Date(date);
                 const todayDate = new Date();
-                if (eventDate > todayDate) {
+                if (eventDate < todayDate) {
                     return res.status(400).json({
-                        message: "Event date cannot be in the future. Please select a valid date.",
+                        message: "Event date cannot be in the past. Please select a valid date.",
                     });
                 }
                 event.date = eventDate;
