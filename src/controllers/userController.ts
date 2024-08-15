@@ -67,7 +67,7 @@ export const eventsAttended = async (
       });
 
       const qrCode = await generateQRCode(
-        `http://localhost:8000/event/${eventId}`
+        `https://eventful-zeta.vercel.app/event/${eventId}`
       );
 
       res.status(200).json({
