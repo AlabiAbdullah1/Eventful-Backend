@@ -14,7 +14,7 @@ import { Request, Response } from "express";
 const eventRoute = Router();
 
 // eventRoute.post("/", verifyRole, createEvent);
-eventRoute.post("/", verifyRole, createEvent);
+eventRoute.post("/", createEvent);
 eventRoute.get("/creator-events", get_Event_By_Creator);
 eventRoute.post("/:eventId/join", attendee_post);
 eventRoute.get("/", getEvents);
