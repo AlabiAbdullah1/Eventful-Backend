@@ -45,7 +45,7 @@ const login_creator = (req, res, next) => __awaiter(void 0, void 0, void 0, func
                 if (error)
                     return next(error);
                 const body = { _id: user._id, email: user.email };
-                const token = jsonwebtoken_1.default.sign({ user: body }, process.env.JWT_SECRET);
+                const token = jsonwebtoken_1.default.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: "1h" });
                 return res.json({ token, Id: user._id });
                 // res.status(200).render("login");
             }));
@@ -64,7 +64,7 @@ const Analytics = (req, res, next) => {
         try {
             const events = yield Events_1.default.find({ creatorId: user._id });
             const analyticsData = yield Promise.all(events.map((event) => __awaiter(void 0, void 0, void 0, function* () {
-                const qrCode = yield (0, qrcode_1.generateQRCode)(`http://localhost:8000/event/${event.id}`);
+                const qrCode = yield (0, qrcode_1.generateQRCode)(`https://eventful-zeta.vercel.app/event/${event.id}`);
                 const attender = event.attendees.length;
                 return {
                     eventAttender: `There are ${attender} attendees for the event ${event.name}`,
@@ -95,7 +95,7 @@ const test = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
                 });
             }
             const eventDetails = yield Promise.all(events.map((event) => __awaiter(void 0, void 0, void 0, function* () {
-                const qrCode = yield (0, qrcode_1.generateQRCode)(`http://localhost:8000/event/${event.id}`);
+                const qrCode = yield (0, qrcode_1.generateQRCode)(`https://eventful-zeta.vercel.app/event/${event.id}`);
                 const attenderCount = event.attendees.length;
                 return {
                     eventName: event.name,

@@ -3,17 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
 import { generateQRCode } from "../utils/qrcode";
-
-export const getRegister = async (req: Request, res: Response) => {
-  try {
-    res.status(200).render("login");
-  } catch (error: any) {
-    return res.status(500).json({
-      message: error.message,
-      stack: error.stack,
-    });
-  }
-};
+import Event from "../models/Events";
 
 export const signup_post = async (req: Request, res: Response) => {
   return res.json({
@@ -44,7 +34,8 @@ export const login_post = async (
         const body = { _id: user._id, email: user.email };
         const token = jwt.sign(
           { user: body },
-          process.env.JWT_SECRET as string
+          process.env.JWT_SECRET as string,
+          { expiresIn: "1h" }
         );
 
         return res.json({ token, Id: user._id });
@@ -117,7 +108,6 @@ export const getAllUsers = async (
     // })(req, res, next);
   }
 };
-
 export const setReminder = async (
   req: Request,
   res: Response,
@@ -126,19 +116,61 @@ export const setReminder = async (
   passport.authenticate("jwt", async (err: Error, user: any, info: any) => {
     try {
       if (err || !user) {
-        res.status(401).json({
-          message: "Unauthorized, Please Login in",
+        return res.status(401).json({
+          message: "Unauthorized, Please Login",
         });
       }
 
-      const date = req.body; //Date to set for the reminder
-      const users = await User.findById(user._id);
+      const eventId: any = req.params;
+      const { date } = req.body;
+
+      if (!eventId || !date) {
+        return res.status(400).json({
+          message: "Event ID and date are required",
+        });
+      }
+
+      // Find the event and update the reminders array
+      const event = await Event.findById(eventId);
+
+      const events = await Event.find;
+
+      if (!event) {
+        return res.status(404).json({
+          message: "Event not found",
+        });
+      }
+
+      // Add or update the reminder
+      const reminderIndex = event.reminders.findIndex((reminder: any) =>
+        reminder.userId.equals(user._id)
+      );
+
+      if (reminderIndex > -1) {
+        // Update existing reminder
+        event.reminders[reminderIndex] = {
+          userId: user._id,
+          email: user.email,
+          date: new Date(date),
+        };
+      } else {
+        // Add new reminder
+        event.reminders.push({
+          userId: user._id,
+          email: user.email,
+          date: new Date(date),
+        });
+      }
+
+      // Save the event
+      await event.save();
 
       res.status(200).json({
-        message: users?.eventAttended,
+        message: "Reminder set successfully",
+        event,
       });
     } catch (err: any) {
-      // return next();
+      console.error(err); // Log the error for debugging
       res.status(500).json({
         message: err.message,
         stack: err.stack,

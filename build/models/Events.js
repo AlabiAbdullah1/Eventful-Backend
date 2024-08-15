@@ -17,7 +17,7 @@ const eventSchema = new mongoose_1.Schema({
     },
     price: {
         type: Number,
-        required: true,
+        // required: true,
     },
     creatorEmail: {
         type: String,

@@ -37,7 +37,7 @@ const eventSchema = new Schema<IEvent>({
   },
   price: {
     type: Number,
-    required: true,
+    // required: true,
   },
   creatorEmail: {
     type: String,

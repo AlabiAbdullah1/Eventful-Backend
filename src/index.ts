@@ -15,10 +15,12 @@ import logger from "./logging/logger";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import cors from "cors";
+import cronScheduler from "./middleware/cronJob";
 
 dotenv.config();
 
 connectToDB();
+// cronScheduler();
 
 const app = express();
 
@@ -38,9 +40,6 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-// app.use(express.static("public"));
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
 
 app.use("/user", userRoute);
 app.use("/creator", creatorRoute);
@@ -56,7 +55,7 @@ const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   logger.info(`Listening on port ${PORT}`);
-  console.log(`Listening on port ${PORT}...`)
+  console.log(`Listening on port ${PORT}...`);
 });
 
 export default app;

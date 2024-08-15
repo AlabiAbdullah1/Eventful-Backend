@@ -14,27 +14,8 @@ import { Request, Response } from "express";
 const eventRoute = Router();
 
 // eventRoute.post("/", verifyRole, createEvent);
-eventRoute.post("/", createEvent);
+eventRoute.post("/", verifyRole, createEvent);
 eventRoute.get("/creator-events", get_Event_By_Creator);
-
-eventRoute.post("/pay", async (req: Request, res: Response) => {
-  try {
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// eventRoute.get("/verify/:reference", async (req: Request, res: Response) => {
-//   const { reference } = req.params;
-
-//   try {
-//     await paymentQueue.add({ reference });
-//     res.status(200).json({ message: "Payment verification in progress" });
-//   } catch (error: any) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
 eventRoute.post("/:eventId/join", attendee_post);
 eventRoute.get("/", getEvents);
 eventRoute.get("/:id", getEvent);

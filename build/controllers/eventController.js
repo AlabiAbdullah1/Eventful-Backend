@@ -198,7 +198,7 @@ const attendee_post = (req, res, next) => __awaiter(void 0, void 0, void 0, func
             yield event.save();
             yield (users === null || users === void 0 ? void 0 : users.save());
             // Generate QR code
-            const qrCode = yield (0, qrcode_1.generateQRCode)(`http://localhost:8000/event/${req.params.id}`);
+            const qrCode = yield (0, qrcode_1.generateQRCode)(`https://eventful-zeta.vercel.app/event/${req.params.id}`);
             res.json({
                 event,
                 qrCode,
@@ -213,7 +213,6 @@ const attendee_post = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }))(req, res, next);
 });
 exports.attendee_post = attendee_post;
-// THIS ONE NA TESTING!!
 const get_Event_By_Creator = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     passport_1.default.authenticate("jwt", (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
         if (err || !user) {

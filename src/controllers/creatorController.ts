@@ -45,7 +45,8 @@ export const login_creator = async (
           const body = { _id: user._id, email: user.email };
           const token = jwt.sign(
             { user: body },
-            process.env.JWT_SECRET as string
+            process.env.JWT_SECRET as string,
+            { expiresIn: "1h" }
           );
 
           return res.json({ token, Id: user._id });
@@ -72,7 +73,7 @@ export const Analytics = (req: Request, res: Response, next: NextFunction) => {
         const analyticsData = await Promise.all(
           events.map(async (event) => {
             const qrCode = await generateQRCode(
-              `http://localhost:8000/event/${event.id}`
+              `https://eventful-zeta.vercel.app/event/${event.id}`
             );
             const attender = event.attendees.length;
 
@@ -111,7 +112,7 @@ export const test = async (req: Request, res: Response, next: NextFunction) => {
       const eventDetails = await Promise.all(
         events.map(async (event) => {
           const qrCode = await generateQRCode(
-            `http://localhost:8000/event/${event.id}`
+            `https://eventful-zeta.vercel.app/event/${event.id}`
           );
           const attenderCount = event.attendees.length;
 

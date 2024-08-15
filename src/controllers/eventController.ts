@@ -3,7 +3,6 @@ import passport from "passport";
 import Event from "../models/Events";
 import { generateQRCode } from "../utils/qrcode";
 import User from "../models/user";
-import { cronJOb } from "../middleware/cronJob";
 import axios from "axios";
 import logger from "../logging/logger";
 
@@ -238,7 +237,7 @@ export const attendee_post = async (
 
       // Generate QR code
       const qrCode = await generateQRCode(
-        `http://localhost:8000/event/${req.params.id}`
+        `https://eventful-zeta.vercel.app/event/${req.params.id}`
       );
 
       res.json({
@@ -254,7 +253,6 @@ export const attendee_post = async (
   })(req, res, next);
 };
 
-// THIS ONE NA TESTING!!
 export const get_Event_By_Creator = async (
   req: Request,
   res: Response,

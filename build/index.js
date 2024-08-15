@@ -20,6 +20,7 @@ const helmet_1 = __importDefault(require("helmet"));
 const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
 (0, dbconnection_1.default)();
+// cronScheduler();
 const app = (0, express_1.default)();
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -34,9 +35,6 @@ app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(path_1.default.join(__dirname, "public")));
-// app.use(express.static("public"));
-app.set("view engine", "ejs");
-app.set("views", path_1.default.join(__dirname, "views"));
 app.use("/user", userRoute_1.default);
 app.use("/creator", creatorRoute_1.default);
 app.use("/event", eventRoute_1.default);
