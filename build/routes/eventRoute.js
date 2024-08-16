@@ -2,10 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const eventController_1 = require("../controllers/eventController");
-const verifyMiddleware_1 = require("../middleware/verifyMiddleware");
 const eventRoute = (0, express_1.Router)();
 // eventRoute.post("/", verifyRole, createEvent);
-eventRoute.post("/", verifyMiddleware_1.verifyRole, eventController_1.createEvent);
+eventRoute.post("/", eventController_1.createEvent);
 eventRoute.get("/creator-events", eventController_1.get_Event_By_Creator);
 eventRoute.post("/:eventId/join", eventController_1.attendee_post);
 eventRoute.get("/", eventController_1.getEvents);

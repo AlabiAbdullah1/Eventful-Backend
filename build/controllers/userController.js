@@ -63,7 +63,7 @@ const eventsAttended = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             const eventId = users === null || users === void 0 ? void 0 : users.eventAttended.map((event) => {
                 return event.id;
             });
-            const qrCode = yield (0, qrcode_1.generateQRCode)(`http://localhost:8000/event/${eventId}`);
+            const qrCode = yield (0, qrcode_1.generateQRCode)(`https://localhost:5173/events-detail/${eventId}`);
             res.status(200).json({
                 message: users === null || users === void 0 ? void 0 : users.eventAttended,
                 qrCode,
@@ -117,6 +117,7 @@ const setReminder = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             }
             // Find the event and update the reminders array
             const event = yield Events_1.default.findById(eventId);
+            const events = yield Events_1.default.find;
             if (!event) {
                 return res.status(404).json({
                     message: "Event not found",
