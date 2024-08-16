@@ -106,50 +106,43 @@ const getEvents = (req, res, next) => __awaiter(void 0, void 0, void 0, function
 exports.getEvents = getEvents;
 // GET AN EVENT
 const getEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    passport_1.default.authenticate("jwt", { session: false }, (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
-        if (err || !user) {
-            return res.status(401).json({
-                message: "Unauthorized, Please Login",
+    try {
+        const id = req.params.id;
+        const events = yield Events_1.default.findById(id);
+        if (!events) {
+            return res.status(404).json({
+                message: "Event not found.",
             });
         }
-        try {
-            const id = req.params.id;
-            const events = yield Events_1.default.findById(id);
-            if (!events) {
-                return res.status(404).json({
-                    message: "Event not found.",
-                });
+        const todayDate = new Date();
+        const updateStatus = (eventDate) => {
+            if (eventDate < todayDate) {
+                return "done";
             }
-            const todayDate = new Date();
-            const updateStatus = (eventDate) => {
-                if (eventDate < todayDate) {
-                    return "done";
-                }
-                else if (eventDate.toDateString() === todayDate.toDateString()) {
-                    return "active";
-                }
-                else {
-                    return "pending";
-                }
-            };
-            const updatedStatus = updateStatus(events.date);
-            const updatedEvent = yield Events_1.default.findByIdAndUpdate(id, { status: updatedStatus }, { new: true });
-            res.status(200).json({
-                message: `The details for ${updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.name}`,
-                name: updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.name,
-                description: updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.description,
-                date: updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.date,
-                status: updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.status,
-                price: updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.price,
-            });
-        }
-        catch (error) {
-            res.status(500).json({
-                message: error.message,
-            });
-            logger_1.default.error(error);
-        }
-    }))(req, res, next);
+            else if (eventDate.toDateString() === todayDate.toDateString()) {
+                return "active";
+            }
+            else {
+                return "pending";
+            }
+        };
+        const updatedStatus = updateStatus(events.date);
+        const updatedEvent = yield Events_1.default.findByIdAndUpdate(id, { status: updatedStatus }, { new: true });
+        res.status(200).json({
+            message: `The details for ${updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.name}`,
+            name: updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.name,
+            description: updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.description,
+            date: updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.date,
+            status: updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.status,
+            price: updatedEvent === null || updatedEvent === void 0 ? void 0 : updatedEvent.price,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+        logger_1.default.error(error);
+    }
 });
 exports.getEvent = getEvent;
 //CREATE ATTENDEES FOR AN EVENT

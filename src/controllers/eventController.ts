@@ -116,61 +116,49 @@ export const getEvent = async (
   res: Response,
   next: NextFunction
 ) => {
-  passport.authenticate(
-    "jwt",
-    { session: false },
-    async (err: any, user: any, info: any) => {
-      if (err || !user) {
-        return res.status(401).json({
-          message: "Unauthorized, Please Login",
-        });
-      }
+  try {
+    const id = req.params.id;
+    const events = await Event.findById(id);
 
-      try {
-        const id = req.params.id;
-        const events = await Event.findById(id);
-
-        if (!events) {
-          return res.status(404).json({
-            message: "Event not found.",
-          });
-        }
-
-        const todayDate = new Date();
-
-        const updateStatus = (eventDate: Date) => {
-          if (eventDate < todayDate) {
-            return "done";
-          } else if (eventDate.toDateString() === todayDate.toDateString()) {
-            return "active";
-          } else {
-            return "pending";
-          }
-        };
-
-        const updatedStatus = updateStatus(events.date);
-        const updatedEvent = await Event.findByIdAndUpdate(
-          id,
-          { status: updatedStatus },
-          { new: true }
-        );
-
-        res.status(200).json({
-          message: `The details for ${updatedEvent?.name}`,
-          name: updatedEvent?.name,
-          description: updatedEvent?.description,
-          date: updatedEvent?.date,
-          status: updatedEvent?.status,
-          price: updatedEvent?.price,
-        });
-      } catch (error: any) {
-        res.status(500).json({
-          message: error.message,
-        });
-        logger.error(error);
-      }
+    if (!events) {
+      return res.status(404).json({
+        message: "Event not found.",
+      });
     }
-  )(req, res, next);
+
+    const todayDate = new Date();
+
+    const updateStatus = (eventDate: Date) => {
+      if (eventDate < todayDate) {
+        return "done";
+      } else if (eventDate.toDateString() === todayDate.toDateString()) {
+        return "active";
+      } else {
+        return "pending";
+      }
+    };
+
+    const updatedStatus = updateStatus(events.date);
+    const updatedEvent = await Event.findByIdAndUpdate(
+      id,
+      { status: updatedStatus },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: `The details for ${updatedEvent?.name}`,
+      name: updatedEvent?.name,
+      description: updatedEvent?.description,
+      date: updatedEvent?.date,
+      status: updatedEvent?.status,
+      price: updatedEvent?.price,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      message: error.message,
+    });
+    logger.error(error);
+  }
 };
 //CREATE ATTENDEES FOR AN EVENT
 
