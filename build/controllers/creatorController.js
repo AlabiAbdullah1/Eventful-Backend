@@ -64,7 +64,7 @@ const Analytics = (req, res, next) => {
         try {
             const events = yield Events_1.default.find({ creatorId: user._id });
             const analyticsData = yield Promise.all(events.map((event) => __awaiter(void 0, void 0, void 0, function* () {
-                const qrCode = yield (0, qrcode_1.generateQRCode)(`https://eventful-zeta.vercel.app/event/${event.id}`);
+                const qrCode = yield (0, qrcode_1.generateQRCode)(`https://frontend-eventful.vercel.app/event/${event._id}`);
                 const attender = event.attendees.length;
                 return {
                     eventAttender: `There are ${attender} attendees for the event ${event.name}`,
@@ -95,7 +95,7 @@ const test = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
                 });
             }
             const eventDetails = yield Promise.all(events.map((event) => __awaiter(void 0, void 0, void 0, function* () {
-                const qrCode = yield (0, qrcode_1.generateQRCode)(`https://eventful-zeta.vercel.app/events-detail/${event.id}`);
+                const qrCode = yield (0, qrcode_1.generateQRCode)(`https://frontend-eventful.vercel.app/events-detail/${event._id}`);
                 const attenderCount = event.attendees.length;
                 return {
                     eventName: event.name,

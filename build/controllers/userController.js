@@ -63,7 +63,7 @@ const eventsAttended = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             const eventId = users === null || users === void 0 ? void 0 : users.eventAttended.map((event) => {
                 return event.id;
             });
-            const qrCode = yield (0, qrcode_1.generateQRCode)(`https://eventful-zeta.vercel.app/events-detail/${eventId}`);
+            const qrCode = yield (0, qrcode_1.generateQRCode)(`https://frontend-eventful.vercel.app/events-detail/${eventId}`);
             res.status(200).json({
                 message: users === null || users === void 0 ? void 0 : users.eventAttended,
                 qrCode,

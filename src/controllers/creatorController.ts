@@ -73,7 +73,7 @@ export const Analytics = (req: Request, res: Response, next: NextFunction) => {
         const analyticsData = await Promise.all(
           events.map(async (event) => {
             const qrCode = await generateQRCode(
-              `https://eventful-zeta.vercel.app/event/${event.id}`
+              `https://frontend-eventful.vercel.app/event/${event._id}`
             );
             const attender = event.attendees.length;
 
@@ -112,7 +112,7 @@ export const test = async (req: Request, res: Response, next: NextFunction) => {
       const eventDetails = await Promise.all(
         events.map(async (event) => {
           const qrCode = await generateQRCode(
-            `https://eventful-zeta.vercel.app/events-detail/${event.id}`
+            `https://frontend-eventful.vercel.app/events-detail/${event._id}`
           );
           const attenderCount = event.attendees.length;
 
