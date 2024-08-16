@@ -191,7 +191,7 @@ const attendee_post = (req, res, next) => __awaiter(void 0, void 0, void 0, func
             yield event.save();
             yield (users === null || users === void 0 ? void 0 : users.save());
             // Generate QR code
-            const qrCode = yield (0, qrcode_1.generateQRCode)(`https://eventful-zeta.vercel.app/event/${req.params.id}`);
+            const qrCode = yield (0, qrcode_1.generateQRCode)(`https://eventful-zeta.vercel.app/events-detail/${req.params.id}`);
             res.json({
                 event,
                 qrCode,

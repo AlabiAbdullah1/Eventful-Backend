@@ -225,7 +225,7 @@ export const attendee_post = async (
 
       // Generate QR code
       const qrCode = await generateQRCode(
-        `https://eventful-zeta.vercel.app/event/${req.params.id}`
+        `https://eventful-zeta.vercel.app/events-detail/${req.params.id}`
       );
 
       res.json({

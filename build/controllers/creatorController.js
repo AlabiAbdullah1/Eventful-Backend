@@ -95,7 +95,7 @@ const test = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
                 });
             }
             const eventDetails = yield Promise.all(events.map((event) => __awaiter(void 0, void 0, void 0, function* () {
-                const qrCode = yield (0, qrcode_1.generateQRCode)(`https://eventful-zeta.vercel.app/event/${event.id}`);
+                const qrCode = yield (0, qrcode_1.generateQRCode)(`https://eventful-zeta.vercel.app/events-detail/${event.id}`);
                 const attenderCount = event.attendees.length;
                 return {
                     eventName: event.name,
